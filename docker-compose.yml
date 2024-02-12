@@ -132,6 +132,9 @@ services:
       GOTRUE_EXTERNAL_PHONE_ENABLED: ${ENABLE_PHONE_SIGNUP}
       GOTRUE_SMS_AUTOCONFIRM: ${ENABLE_PHONE_AUTOCONFIRM}
 
+      GOTRUE_SAML_ENABLED: ${GOTRUE_SAML_ENABLED}
+      GOTRUE_SAML_PRIVATE_KEY: ${GOTRUE_SAML_PRIVATE_KEY}
+
   rest:
     container_name: supabase-rest
     image: postgrest/postgrest:v12.0.1
@@ -373,6 +376,8 @@ services:
       - ./volumes/db/data:/var/lib/postgresql/data:Z
       # Changes required for Analytics support
       - ./volumes/db/logs.sql:/docker-entrypoint-initdb.d/migrations/99-logs.sql:Z
+      # Seed data should be inserted last (alphabetical order)
+      - ./volumes/db/init/data.sql:/docker-entrypoint-initdb.d/seed.sql
 
   # vector:
   #   container_name: supabase-vector

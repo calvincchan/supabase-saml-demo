@@ -1,0 +1,50 @@
+@BASE_URL={{$dotenv API_EXTERNAL_URL}}
+@SERVICE_KEY={{$dotenv SERVICE_ROLE_KEY}}
+@PROVIDER_ID=none
+
+### Get SAML Metadata
+GET {{BASE_URL}}/auth/v1/sso/saml/metadata?download=true
+APIKey: {{SERVICE_KEY}}
+Authorization: Bearer {{SERVICE_KEY}}
+
+### Read Auth settings
+GET {{BASE_URL}}/auth/v1/settings
+APIKey: {{SERVICE_KEY}}
+Authorization: Bearer {{SERVICE_KEY}}
+
+### List IdPs
+GET {{BASE_URL}}/auth/v1/admin/sso/providers
+APIKey: {{SERVICE_KEY}}
+Authorization: Bearer {{SERVICE_KEY}}
+
+### Read a single IdP
+GET {{BASE_URL}}/auth/v1/admin/sso/providers/{{PROVIDER_ID}}
+APIKey: {{SERVICE_KEY}}
+Authorization: Bearer {{SERVICE_KEY}}
+
+### Add Auth0 IdP
+POST {{BASE_URL}}/auth/v1/admin/sso/providers
+APIKey: {{SERVICE_KEY}}
+Authorization: Bearer {{SERVICE_KEY}}
+
+{
+  "type": "saml",
+  "metadata_url": "https://dev-g8es4m0caprhrd4c.us.auth0.com/samlp/metadata/PU7tL448jcXfMpixiStfO3zzbmsBQktG",
+  "domains": ["auth0.com"]
+}
+
+### Add ISF IdP
+POST {{BASE_URL}}/auth/v1/admin/sso/providers
+APIKey: {{SERVICE_KEY}}
+Authorization: Bearer {{SERVICE_KEY}}
+
+{
+  "type": "saml",
+  "metadata_url": "https://isfadfs.isf.edu.hk/FederationMetadata/2007-06/FederationMetadata.xml",
+  "domains": ["isf.edu.hk"]
+}
+
+### Remove IdP
+DELETE {{BASE_URL}}/auth/v1/admin/sso/providers/{{PROVIDER_ID}}
+APIKey: {{SERVICE_KEY}}
+Authorization: Bearer {{SERVICE_KEY}}
