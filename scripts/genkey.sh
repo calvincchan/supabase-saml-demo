@@ -1,0 +1,1 @@
+openssl genpkey -algorithm rsa -outform DER -quiet | base64
