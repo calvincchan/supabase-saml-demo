@@ -22,7 +22,6 @@ function App() {
   }
 
   const [authState, setAuthState] = useState<AuthChangeEvent | "">("");
-  // const [user, setUser] = useState<null>(null);
   const [session, setSession] = useState<Session | null>(null);
 
   useEffect(() => {
@@ -44,8 +43,6 @@ function App() {
     <>
       <h1>SSO Login Demo</h1>
       <p>Auth state: {JSON.stringify(authState)}</p>
-      {/* <h2>User Info</h2> */}
-      {/* <pre>{JSON.stringify(user, null, 2)}</pre> */}
       <h2>Session</h2>
       <pre>{JSON.stringify(session, null, 2)}</pre>
       {authState === "SIGNED_IN" ? (
