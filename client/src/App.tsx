@@ -1,35 +1,64 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
+import { AuthChangeEvent, Session } from "@supabase/supabase-js";
+import { useEffect, useState } from "react";
+import "./App.css";
+import { SSO_DOMAIN, supabaseClient } from "./supabase-client";
 
 function App() {
-  const [count, setCount] = useState(0)
+  async function ssoLogin(sso_domain: string = SSO_DOMAIN) {
+    const { data, error } = await supabaseClient.auth.signInWithSSO({
+      domain: sso_domain,
+    });
+    if (error) {
+      alert(error.message);
+      return;
+    }
+    if (data?.url) {
+      // redirect the user to the identity provider's authentication flow
+      window.location.href = data.url;
+      return;
+    } else {
+      alert("Unable to open SSO login page.");
+    }
+  }
+
+  const [authState, setAuthState] = useState<AuthChangeEvent | "">("");
+  // const [user, setUser] = useState<null>(null);
+  const [session, setSession] = useState<Session | null>(null);
+
+  useEffect(() => {
+    supabaseClient.auth.onAuthStateChange((event, sessionValue) => {
+      if (event === "INITIAL_SESSION") {
+        setSession(sessionValue);
+      } else {
+        setAuthState(event);
+      }
+    });
+  }, []);
+
+  async function logout() {
+    await supabaseClient.auth.signOut();
+    setSession(null);
+  }
 
   return (
     <>
-      <div>
-        <a href="https://vitejs.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
+      <h1>SSO Login Demo</h1>
+      <p>Auth state: {JSON.stringify(authState)}</p>
+      {/* <h2>User Info</h2> */}
+      {/* <pre>{JSON.stringify(user, null, 2)}</pre> */}
+      <h2>Session</h2>
+      <pre>{JSON.stringify(session, null, 2)}</pre>
+      {authState === "SIGNED_IN" ? (
         <p>
-          Edit <code>src/App.tsx</code> and save to test HMR
+          <button onClick={() => logout()}>Sign Out</button>
         </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
+      ) : (
+        <p>
+          <button onClick={() => ssoLogin()}>SSO Login</button>
+        </p>
+      )}
     </>
-  )
+  );
 }
 
-export default App
+export default App;
